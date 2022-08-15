@@ -44,6 +44,9 @@ class NautobotDevice(Device):
         Returns:
             device_tag_id (str)
         """
+        #checking for periods in hostname such as router1.mycompany.local
+        if '.' in self.name:
+            self.name =
         if self.device_tag_id:
             return self.device_tag_id
 
@@ -567,14 +570,16 @@ class NautobotVlan(Vlan):
         try:
             item = super().create(ids=ids, diffsync=diffsync, attrs=attrs)
             nb_params = item.translate_attrs_for_nautobot(attrs)
-            vlan = diffsync.nautobot.ipam.vlans.create(**nb_params)
-            item.remote_id = vlan.id
-            LOGGER.info("Created Vlan %s in %s (%s)", item.get_unique_id(), diffsync.name, vlan.id)
+            #vlan = diffsync.nautobot.ipam.vlans.create(**nb_params)
+            #item.remote_id = vlan.id
+            #LOGGER.info("Created Vlan %s in %s (%s)", item.get_unique_id(), diffsync.name, vlan.id)
+            LOGGER.info(f"Skipping vlan - {ids} - Forcing no-creation")
         except pynautobot.core.query.RequestError as exc:
             LOGGER.warning("Unable to create Vlan %s in %s (%s)", ids, diffsync.name, exc.error)
             return None
 
-        return item
+        #Forcing no creation of VLANS since this half works and ignores the false flag for some devices
+        return None
 
     def update_clean_tags(self, nb_params, obj):
         """Update list of vlan tags with additinal tags that already exists on the object in nautobot.
