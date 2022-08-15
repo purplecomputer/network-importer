@@ -45,8 +45,6 @@ class NautobotDevice(Device):
             device_tag_id (str)
         """
         #checking for periods in hostname such as router1.mycompany.local
-        if '.' in self.name:
-            self.name =
         if self.device_tag_id:
             return self.device_tag_id
 
