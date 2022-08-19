@@ -7,7 +7,6 @@ RUN pip install --upgrade pip \
 
 WORKDIR /local
 COPY pyproject.toml poetry.lock /local/
-COPY NautobotCleaner/. /local
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi --no-root
