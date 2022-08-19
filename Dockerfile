@@ -16,7 +16,8 @@ COPY nautobotcleaner/list_of_devices.txt /local/
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi --no-root \
-  && pip install python-dotenv gevent
+  && pip install python-dotenv gevent \
+  && mkdir MAINRUN
 
 COPY . /local
 RUN poetry install --no-interaction --no-ansi
