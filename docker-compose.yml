@@ -24,3 +24,7 @@ services:
     ports:
       - "9997:9997"
       - "9996:9996"
+networks:
+  default:
+    name: nautobot-docker-compose_default
+    external: true
