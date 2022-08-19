@@ -1,0 +1,16 @@
+es0.chi.webair.net,chi-l3
+es1.chi.webair.net,chi-l3
+es0.lax.webair.net,lax-l3
+es1.lax.webair.net,lax-l3
+es0.lon.webair.net,lon-l3
+es1.lon.webair.net,lon-l3
+es0.par.webair.net,par-l3
+es1.par.webair.net,par-l3
+es0.sg.webair.net,sg-l3
+es1.sg.webair.net,sg-l3
+dsc120.gsc.webair.net,ds120-l3
+dsd120.gsc.webair.net,ds120-l3
+dsc121.gsc.webair.net,ds121-l3
+dsd121.gsc.webair.net,ds121-l3
+dsc180.gsc.webair.net,ds180-l3
+dsd180.gsc.webair.net,ds180-l3
