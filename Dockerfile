@@ -21,3 +21,4 @@ RUN poetry config virtualenvs.create false \
 COPY . /local
 RUN poetry install --no-interaction --no-ansi
 
+ENTRYPOINT ["python"]
