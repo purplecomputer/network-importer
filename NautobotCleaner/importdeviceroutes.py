@@ -1,6 +1,6 @@
 
 from netmiko import ConnectHandler
-from config import nautobot_url, nautobot_token, device_platform_connection,device_username,device_password
+from config import nautobot_url, nautobot_token,device_username,device_password
 import pynautobot
 import ipaddress
 import gevent

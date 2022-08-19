@@ -3,7 +3,6 @@
 
 from importdevicevlans import NautobotCleanerVlans
 from importdeviceroutes import NautobotCleanerRoutes
-from netmonimporter import NautobotCleanerNetmonImport
 from import_cid import ImportClientIDs
 import os
 import logging
