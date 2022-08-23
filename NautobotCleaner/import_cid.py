@@ -4,15 +4,15 @@ import gevent.pool
 import logging
 from datetime import datetime
 import pynautobot
-from config import nautobot_url, nautobot_token
+from config import nb_url, nb_token
 import sys
 
 
 class ImportClientIDs():
     def __init__(self):
-        self.pynb = pynautobot.api(nautobot_url, token=nautobot_token)
+        self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'CID/{self.runTime}_cid.log', level=logging.DEBUG)
+        logging.basicConfig(filename=f'synclogs/CID/{self.runTime}_cid.log', level=logging.DEBUG)
 
     def _update_or_create_tenant(self, **kwargs ):
         '''Finds the tenant, if not cretes it and returns ID'''

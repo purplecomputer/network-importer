@@ -1,6 +1,6 @@
 
 from netmiko import ConnectHandler
-from config import nautobot_url, nautobot_token,device_username,device_password
+from config import nb_url, nb_token,device_username,device_password
 import pynautobot
 import ipaddress
 import gevent
@@ -10,9 +10,9 @@ from datetime import datetime
 
 class NautobotCleanerRoutes():
     def __init__(self):
-        self.pynb = pynautobot.api(nautobot_url, token=nautobot_token)
+        self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'ROUTES/{self.runTime}_routes.log',level=logging.DEBUG)
+        logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.DEBUG)
 
     ######################
     # IP And Prefix Tool Functions

@@ -1,6 +1,6 @@
 #Angelo.Poggi
 
-from config import nautobot_url, nautobot_token, device_platform_connection,device_username,device_password
+from config import nb_url, nb_token, device_platform_connection,device_username,device_password
 import pynautobot
 import napalm
 import gevent
@@ -13,9 +13,9 @@ from datetime import datetime
 class NautobotCleanerVlans:
     def __init__(self):
         '''creates a connection to nautobot and device during instantiation of class'''
-        self.pynb = pynautobot.api(nautobot_url, token=nautobot_token)
+        self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'VLANS/{self.runTime}.log',level=logging.DEBUG)
+        logging.basicConfig(filename=f'synclogs/VLANS/{self.runTime}.log',level=logging.DEBUG)
 
     def _connecttodevice(self, device):
         '''Connects to the devices and returns a dict containing vlans using VLANS'''

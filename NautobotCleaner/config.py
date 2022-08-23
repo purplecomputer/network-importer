@@ -11,8 +11,8 @@ except:
     raise ("Could not open .env file; please make sure it exsists!")
 
 #Nautobot Junk
-nautobot_url = os.environ['NAUTOBOT_URL']
-nautobot_token = os.environ['NAUTOBOT_TOKEN']
+nb_url = os.environ['NB_URL']
+nb_token = os.environ['NB_TOKEN']
 
 #netmon
 #netmon_url = os.environ['NETMON_URL']
