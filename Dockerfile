@@ -7,12 +7,12 @@ RUN pip install --upgrade pip \
 
 WORKDIR /local
 COPY pyproject.toml poetry.lock /local/
-COPY nautobotcleaner/config.py /local/
-COPY nautobotcleaner/importdeviceroutes.py /local/
-COPY nautobotcleaner/importdevicevlans.py /local/
-COPY nautobotcleaner/import_cid.py /local/
-COPY nautobotcleaner/main.py /local/
-COPY nautobotcleaner/list_of_devices.txt /local/
+COPY NautobotCleaner/config.py /local/
+COPY NautobotCleaner/importdeviceroutes.py /local/
+COPY NautobotCleaner/importdevicevlans.py /local/
+COPY NautobotCleaner/import_cid.py /local/
+COPY NautobotCleaner/main.py /local/
+COPY NautobotCleaner/list_of_devices.txt /local/
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi --no-root \

@@ -18,7 +18,7 @@ services:
       - "./network_importer:/source/network_importer"
       - "./examples:/source/examples"
       - "./tests:/source/tests"
-      - "./synclogs:/local/synclogs
+      - "./synclogs:/local/synclogs"
   batfish:
     container_name: "batfish-test"
     image: "batfish/batfish:2020.10.08.667"
