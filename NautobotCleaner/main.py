@@ -15,12 +15,12 @@ class NetworkSync():
         self.nbc = ImportClientIDs()
         self.nbr = NautobotCleanerRoutes()
     def main_sync(self, device, group):
-        try:
-            logging.info(f"Attempting Network Importer for {device}")
-            os.system(f"network-importer apply --update-configs --limit={device}")
-        except Exception as e:
-            logging.warning(f"Could not run network-importer on {device}")
-            logging.warning(e)
+        # try:
+        #     logging.info(f"Attempting Network Importer for {device}")
+        #     os.system(f"network-importer apply --update-configs --limit={device}")
+        # except Exception as e:
+        #     logging.warning(f"Could not run network-importer on {device}")
+        #     logging.warning(e)
         try:
             logging.info(f"Attempting to import vlans on {device}")
             self.nbv.importdevicevlans(selected_devices=[device], group=str(group))
