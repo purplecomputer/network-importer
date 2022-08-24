@@ -12,8 +12,7 @@ class NautobotCleanerRoutes():
     def __init__(self):
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.DEBUG)
-
+        logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.INFO)
     ######################
     # IP And Prefix Tool Functions
     ######################
@@ -67,9 +66,6 @@ class NautobotCleanerRoutes():
                 status='active',
                 site=data['device_object.site.id'],
             )
-
-
-
 
     def _getstaticroutes(self, device):
         '''uses netmiko and NTC textfsm tempalte to pull static routes'''
@@ -157,7 +153,3 @@ class NautobotCleanerRoutes():
             gpool = gevent.pool.Pool(100)
             for device in selected_devices:
                 gpool.spawn(self._getstaticroutes(device))
-
-
-
-

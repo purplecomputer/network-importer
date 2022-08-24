@@ -15,7 +15,7 @@ class NautobotCleanerVlans:
         '''creates a connection to nautobot and device during instantiation of class'''
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/VLANS/{self.runTime}.log',level=logging.DEBUG)
+        logging.basicConfig(filename=f'synclogs/VLANS/{self.runTime}.log',level=logging.INFO)
 
     def _connecttodevice(self, device):
         '''Connects to the devices and returns a dict containing vlans using VLANS'''

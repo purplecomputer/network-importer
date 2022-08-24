@@ -12,7 +12,7 @@ class ImportClientIDs():
     def __init__(self):
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/CID/{self.runTime}_cid.log', level=logging.DEBUG)
+        logging.basicConfig(filename=f'synclogs/CID/{self.runTime}_cid.log', level=logging.INFO)
 
     def _update_or_create_tenant(self, **kwargs ):
         '''Finds the tenant, if not cretes it and returns ID'''
