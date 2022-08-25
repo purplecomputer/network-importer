@@ -153,3 +153,7 @@ class NautobotCleanerRoutes():
             gpool = gevent.pool.Pool(100)
             for device in selected_devices:
                 gpool.spawn(self._getstaticroutes(device))
+
+if __name__ == "__main__":
+    nbr = NautobotCleanerRoutes()
+    nbr.importdevicestaticroutes(selected_devices=['es0.chi.webair.net'])
