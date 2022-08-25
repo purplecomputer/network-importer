@@ -12,7 +12,7 @@ class NautobotCleanerRoutes():
     def __init__(self):
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.INFO)
+        logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.DEBUG)
     ######################
     # IP And Prefix Tool Functions
     ######################
@@ -130,7 +130,7 @@ class NautobotCleanerRoutes():
                             prefix=str(prefix_join),
                             status='active',
                             site=device_object.site.id,
-                            vlan=nexthop_prefix.vlan.id
+                            #vlan=nexthop_prefix.vlan.id
                             #tenant=device_object.tenant.id
                         )
                     else:
@@ -138,7 +138,7 @@ class NautobotCleanerRoutes():
                             'prefix': str(prefix_join),
                             'status': 'active',
                             'site':   device_object.site.id,
-                            'vlan' : nexthop_prefix.vlan.id
+                            #'vlan' : nexthop_prefix.vlan.id
                             #'tenant': device_object.tenant.id
                         })
 
