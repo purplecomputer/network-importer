@@ -16,13 +16,28 @@ class NautobotCleanerRoutes():
     ######################
     # IP And Prefix Tool Functions
     ######################
+    def _findparentprefix(self, ip, connectedrouteinfo):
+        '''if we couldn't find the IP itself, we try to query the current device and site and see if it fits
+        inside a particualr prefix'''
+        for data in connectedrouteinfo:
+            prefix = f'''{data['network']}/{data['mask']}'''
+            ip_a = ipaddress.ip_network(ip)
+            ip_b = ipaddress.ip_network(prefix)
+            check = ip_a.subnet_of(ip_b)
+            if check == True:
+                #query nautobot and just return the object
+                return True
+            else:
+                return None
     def _findprefix(self, ip):
         '''Takes an IP address and attempts find it in nautobot to get prefix length
             Uses that to compute the prefix and queries that in nautobot to get the VLAN ID if its associated'''
         ip_lookup = self.pynb.ipam.ip_addresses.filter(str(ip))
         if len(ip_lookup) == 0:
             logging.debug('Could not Find the IP address in Nautobot')
+
             return None
+        #not none here, means we got returned a prefix from the IP_LOOKUP
         prefix_check = ipaddress.ip_network(ip_lookup[0], strict=False)
         try:
             prefix_lookup = self.pynb.ipam.prefixes.get(prefix=prefix_check.with_prefixlen)
@@ -81,6 +96,7 @@ class NautobotCleanerRoutes():
         )
         net_connect.find_prompt()
         output = net_connect.send_command('show ip route static',use_textfsm=True)
+        connected_output = net_connect.send_command('show ip route connected', use_textfsm=True)
         logging.debug(f'routing table info {output}')
         for data in output:
             '''If Null0 set as conatiner'''
@@ -114,10 +130,12 @@ class NautobotCleanerRoutes():
                     })
             else:
                 '''Else logic if next hop is not Null0'''
-                # we pull the prefix from the next hop IP
-                nexthop_prefix = self._findprefix(data['nexthop_ip'])
-                if nexthop_prefix is None:
-
+                '''We check to see if the next hop IP is part of a connected route'''
+                nexthop_prefix = self._findparentprefix(data['nexthop_ip'], connected_output)
+                if nexthop_prefix != True:
+                    #if its not part of anytning we just skip it for now
+                    continue
+                else:
                 #see if the prefix we want to create is already in nautobot
                     prefix_object = self.pynb.ipam.prefixes.get(
                         prefix=str(prefix_join),
@@ -130,7 +148,7 @@ class NautobotCleanerRoutes():
                             prefix=str(prefix_join),
                             status='active',
                             site=device_object.site.id,
-                            #vlan=nexthop_prefix.vlan.id
+                            vlan=nexthop_prefix.vlan.id
                             #tenant=device_object.tenant.id
                         )
                     else:
@@ -138,11 +156,9 @@ class NautobotCleanerRoutes():
                             'prefix': str(prefix_join),
                             'status': 'active',
                             'site':   device_object.site.id,
-                            #'vlan' : nexthop_prefix.vlan.id
+                            'vlan' : nexthop_prefix.vlan.id
                             #'tenant': device_object.tenant.id
                         })
-
-                # TODO Link the prefix with the same VLAN ID as its next hop if not NULL0
 
     def importdevicestaticroutes(self, selected_devices=[]):
         if len(selected_devices) == 0:
