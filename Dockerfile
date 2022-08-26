@@ -28,4 +28,4 @@ COPY . /local
 RUN poetry install --no-interaction --no-ansi
 
 ENTRYPOINT ["python3"]
-CMD ["main.py"]
+
