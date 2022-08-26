@@ -12,7 +12,7 @@ class ImportClientIDs():
     def __init__(self):
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/CID/{self.runTime}_cid.log', level=logging.INFO)
+        #logging.basicConfig(filename=f'synclogs/CID/{self.runTime}_cid.log', level=logging.INFO)
 
     def _update_or_create_tenant(self, **kwargs ):
         '''Finds the tenant, if not cretes it and returns ID'''
@@ -39,11 +39,11 @@ class ImportClientIDs():
         logging.debug(ip)
         clientID = requests.get(f'http://admin.webair.com/cgi-bin/clientbyip.cgi?ip={ip}')
         if clientID.status_code != 200:
-            logging.debug(f'could not find CID for : {ip}')
+            logging.warning(f'could not find CID for : {ip}')
             return None
             exit(1)
         else:
-            logging.debug(f"Found CID:{clientID.json()['cid']} for {ip}")
+            logging.info(f"Found CID:{clientID.json()['cid']} for {ip}")
             return clientID.json()['cid']
     def _add_tenant_to_prefix(self,prefix_id):
         try:
@@ -60,7 +60,7 @@ class ImportClientIDs():
             )
         except Exception as e:
             logging.warning(f"Could not add the custom field due to the following error - {e}")
-        logging.debug(f"Succesfully linked tenant object {tenant_id} to prefix {prefix_id}")
+        logging.info(f"Succesfully linked tenant object {tenant_id} to prefix {prefix_id}")
 
     def _add_cid_to_cf(self,prefix):
         try:

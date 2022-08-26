@@ -12,7 +12,6 @@ import gevent
 class NetworkSync():
     def __init__(self):
         self.nbv = NautobotCleanerVlans()
-        self.nbc = ImportClientIDs()
         self.nbr = NautobotCleanerRoutes()
     def main_sync(self, device, group):
         try:
@@ -84,8 +83,12 @@ if __name__ == "__main__":
     logging.basicConfig(filename=f'synclogs/MAINRUN/{runtime}.log', level=logging.INFO)
     sync = NetworkSync()
     gpool = gevent.pool.Pool(100)
+    nbc = ImportClientIDs()
     with open('list_of_devices.txt', 'r') as listOfDevices:
         for device in listOfDevices:
             device_group = device.split(',')
             gpool.spawn(sync.main_sync(device_group[0], device_group[1].rstrip()))
+    #this already had threading built in, just calling it here to run
+    nbc.linkclientidtoip()
+
 

@@ -12,7 +12,7 @@ class NautobotCleanerRoutes():
     def __init__(self):
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.DEBUG)
+        #logging.basicConfig(filename=f'synclogs/ROUTES/{self.runTime}_routes.log',level=logging.)
     ######################
     # IP And Prefix Tool Functions
     ######################
@@ -34,7 +34,7 @@ class NautobotCleanerRoutes():
             Uses that to compute the prefix and queries that in nautobot to get the VLAN ID if its associated'''
         ip_lookup = self.pynb.ipam.ip_addresses.filter(str(ip))
         if len(ip_lookup) == 0:
-            logging.debug('Could not Find the IP address in Nautobot')
+            logging.warning(f'Could not Find the IP {str(ip)} address in Nautobot')
 
             return None
         #not none here, means we got returned a prefix from the IP_LOOKUP
@@ -42,7 +42,7 @@ class NautobotCleanerRoutes():
         try:
             prefix_lookup = self.pynb.ipam.prefixes.get(prefix=prefix_check.with_prefixlen)
         except:
-            logging.debug('Could not Find the Parent Prefix in Nautobot')
+            logging.warning(f'Could not Find the Parent Prefix for ip {ip_lookup[0]} in Nautobot')
         return prefix_lookup
 
     def _isIP(self, network):
@@ -84,7 +84,7 @@ class NautobotCleanerRoutes():
 
     def _getstaticroutes(self, device):
         '''uses netmiko and NTC textfsm tempalte to pull static routes'''
-        logging.debug(f'Import prefix from routing table for {device}')
+        logging.info(f'Import prefix from routing table for {device}')
         device_object = self.pynb.dcim.devices.get(name=str(device))
         # device_os = device_platform_connection[str(device.platform)]['os']
         net_connect = ConnectHandler(
@@ -97,12 +97,13 @@ class NautobotCleanerRoutes():
         net_connect.find_prompt()
         output = net_connect.send_command('show ip route static',use_textfsm=True)
         connected_output = net_connect.send_command('show ip route connected', use_textfsm=True)
-        logging.debug(f'routing table info {output}')
+        logging.debug(f'static routing table info {output}')
+        logging.debug(f'connected routing table info {connected_output}')
         for data in output:
             '''If Null0 set as conatiner'''
             prefix_join = f'''{data['network']}/{data['mask']}'''
             prefix_check = self._isIP(prefix_join)
-            logging.debug(f'Import prefix {prefix_join}')
+            logging.info(f'Import prefix {prefix_join}')
             if prefix_check != True:
                 continue
             if data['nexthop_if'] == 'Null0':

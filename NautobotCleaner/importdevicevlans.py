@@ -15,7 +15,7 @@ class NautobotCleanerVlans:
         '''creates a connection to nautobot and device during instantiation of class'''
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
-        logging.basicConfig(filename=f'synclogs/VLANS/{self.runTime}.log',level=logging.INFO)
+        #logging.basicConfig(filename=f'synclogs/VLANS/{self.runTime}.log',level=logging.INFO)
 
     def _connecttodevice(self, device):
         '''Connects to the devices and returns a dict containing vlans using VLANS'''
@@ -89,7 +89,7 @@ class NautobotCleanerVlans:
                     })
                 interface_obj = self.pynb.dcim.interfaces.get(name=data['interface'], device_id=device.id)
                 if interface_obj is None:
-                    logging.debug(f'''interface {data['interface']} not found on {device}''')
+                    logging.warning(f'''interface {data['interface']} not found on {device}''')
                     continue
                 interface_obj.update({
                     'mode' : 'tagged',
@@ -109,17 +109,17 @@ class NautobotCleanerVlans:
                 for ips,netmask in v['ipv6'].items():
                     interface_obj = self.pynb.dcim.interfaces.get(name=str(k), device_id=device_obj.id)
                     if interface_obj is None:
-                        logging.debug(f'{k} not found on {device_obj.name}')
+                        logging.warning(f'{k} not found on {device_obj.name}')
                         continue
                     #check to see if address i link local/private
                     ip_validation = ipaddress.IPv6Network(ips)
                     if ip_validation.is_private is True:
-                        logging.debug(f"{ips} appears to be a private address - SKIPPING!")
+                        logging.info(f"{ips} appears to be a private address - SKIPPING!")
                         continue
                     ip_obj = self.pynb.ipam.ip_addresses.get(address=str(ips))
                     if ip_obj is None:
                         address = f"{ips}/{netmask['prefix_length']}"
-                        logging.debug(address)
+                        logging.info(address)
                         self.pynb.ipam.ip_addresses.create({
                             'address': address,
                             'site':device_obj.site.id,
@@ -234,12 +234,12 @@ class NautobotCleanerVlans:
             '''If pulling the prefix by ID, it is not necessary to pass along param, just put the ID in the parent'''
             prefix = self.pynb.ipam.prefixes.get(prefix=prefix_obj.with_prefixlen)
             #add code to create prefix if it doesnt exsist?
-            logging.debug(f"trying to link prefix {prefix} to ID {vlan_nb_id}")
+            logging.info(f"trying to link prefix {prefix} to ID {vlan_nb_id}")
             try:
                 prefix.update({
                     'vlan': vlan_nb_id
                 })
-                logging.debug(f'Linked Prefix {prefix} to VLAN ID {vlan_nb_id}')
+                logging.info(f'Linked Prefix {prefix} to VLAN ID {vlan_nb_id}')
             except:
                 logging.warning(f'Unable to link Prefix {prefix} to VLAN ID {vlan_nb_id}')
 
@@ -248,16 +248,16 @@ class NautobotCleanerVlans:
         # query Device
         device_object = self.pynb.dcim.devices.get(name=str(device))
         if 'cisco_iosxe' in device_object.platform.slug:
-            logging.debug('IOS XE - Just parsing Portchannels for VLANS')
+            logging.info('IOS XE - Just parsing Portchannels for VLANS')
             self._parseportchannelvlans(device,group)
-            logging.debug(f"Linking SVIs to VLAN Objects for {device_object.name}")
+            logging.info(f"Linking SVIs to VLAN Objects for {device_object.name}")
             self._linkSVItoImportVlan(group, device)
-            logging.debug(f'''IPv6 Houskeeping on {device_object.name}''')
+            logging.info(f'''IPv6 Houskeeping on {device_object.name}''')
             self._getipv6(device)
 
         elif 'l2' in device_object.name:
             # TODO Move this to a dev branch?
-            logging.debug("Layer 2 device - only need VLANS")
+            logging.info("Layer 2 device - only need VLANS")
             vlans = self._getvlans(device_object.name)
             vlans = self._formatnapalmvlandict(group, vlans, device)
             tenant_group = self.pynb.tenancy.tenants.get(name=str(group))
@@ -271,28 +271,28 @@ class NautobotCleanerVlans:
                 })
             for interface, vlan in vlans.items():
                 '''query interface object'''
-                logging.debug(interface)
+                logging.info(interface)
                 interfaceQuery = self.pynb.dcim.interfaces.get(
                     name__ie=str(interface),
                     device_id=device_object.id
                 )
                 if interfaceQuery is None:
-                    logging.debug(f'Interface: {interface} does not match SOT list - Skipping!')
+                    logging.warning(f'Interface: {interface} does not match SOT list - Skipping!')
                     continue
 
                 if len(vlan) == 1:
-                    logging.debug(f"Setting {interfaceQuery.name} on {device_object.name} as access port with VLAN {vlan[0]}")
+                    logging.info(f"Setting {interfaceQuery.name} on {device_object.name} as access port with VLAN {vlan[0]}")
                     '''if the interface exsist but has no vlans or mode set
                     update and link curent vlan to vlan we are
                     set the interface as access'''
-                    logging.debug('setting int as untagged')
+                    logging.info('setting int as untagged')
                     interfaceQuery.update({
                         'mode':          'access',
                         'untagged_vlan': vlan[0]
                     })
                 else:
                     '''If vlan dict value list is longer than 1'''
-                    logging.debug(f"Setting {interfaceQuery.name} on {device_object.name} as Trunk with tagged")
+                    logging.info(f"Setting {interfaceQuery.name} on {device_object.name} as Trunk with tagged")
                     interfaceQuery.update({
                         'mode':         'tagged',
                         'tagged_vlans': vlan
@@ -330,22 +330,22 @@ class NautobotCleanerVlans:
                     device_id=device_object.id
                 )
                 if interfaceQuery is None:
-                    logging.debug(f'Interface: {interface} does not match SOT list - Skipping!')
+                    logging.warning(f'Interface: {interface} does not match SOT list - Skipping!')
                     continue
 
                 if len(vlan) == 1:
-                    logging.debug(f"Setting {interfaceQuery.name} on {device_object.name} as access port with VLAN {vlan[0]}")
+                    logging.info(f"Setting {interfaceQuery.name} on {device_object.name} as access port with VLAN {vlan[0]}")
                     '''if the interface exsist but has no vlans or mode set
                     update and link curent vlan to vlan we are
                     set the interface as access'''
-                    logging.debug('setting int as untagged')
+                    logging.info('setting int as untagged')
                     interfaceQuery.update({
                         'mode' : 'access',
                         'untagged_vlan' : vlan[0]
                     })
                 else:
                     '''If vlan dict value list is longer than 1'''
-                    logging.debug(f"Setting {interfaceQuery.name} on {device_object.name} as Trunk with tagged")
+                    logging.info(f"Setting {interfaceQuery.name} on {device_object.name} as Trunk with tagged")
                     interfaceQuery.update({
                         'mode' : 'tagged',
                         'tagged_vlans' : vlan
@@ -362,24 +362,24 @@ class NautobotCleanerVlans:
                     #             'tenant':               tenant_group.id
                     #         })
             #Link VLANs to SVI
-            logging.debug(f"Linking SVIs to VLAN Objects for {device_object.name}")
+            logging.info(f"Linking SVIs to VLAN Objects for {device_object.name}")
             try:
                 self._linkSVItoImportVlan(group,device)
             except:
-                logging.debug(f'Something went wrong importing SVIs on {device_object.name}')
+                logging.warning(f'Something went wrong importing SVIs on {device_object.name}')
             #Parse port channels
             try:
-                logging.debug("Parsing portchannels")
+                logging.info("Parsing portchannels")
                 self._parseportchannelvlans(device_object.name, group)
             except:
-                logging.debug(f'Something went wrong importing portchannel vlans on {device_object.name}')
+                logging.warning(f'Something went wrong importing portchannel vlans on {device_object.name}')
 
             #IPv6 House keeping since we are already on the device
             try:
-                logging.debug(f'''IPv6 Houskeeping on {device_object.name}''')
+                logging.info(f'''IPv6 Houskeeping on {device_object.name}''')
                 self._getipv6(device_object.name)
             except:
-                logging.debug(f'Something went wrong importing IPV6 on {device_object.name}')
+                logging.warning(f'Something went wrong importing IPV6 on {device_object.name}')
 
     def importdevicevlans(self,group, selected_devices=[]):
         if len(selected_devices) == 0:
