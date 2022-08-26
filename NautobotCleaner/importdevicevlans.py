@@ -236,18 +236,18 @@ class NautobotCleanerVlans:
         else:
             for ips in interface_addresses:
             #grab the ip and turn it into a prefix
-            prefix_obj = ipaddress.ip_network(ips, strict=False)
-            '''If pulling the prefix by ID, it is not necessary to pass along param, just put the ID in the parent'''
-            prefix = self.pynb.ipam.prefixes.get(prefix=prefix_obj.with_prefixlen)
-            #add code to create prefix if it doesnt exsist?
-            logging.info(f"trying to link prefix {prefix} to ID {vlan_nb_id}")
-            try:
-                prefix.update({
-                    'vlan': vlan_nb_id
-                })
-                logging.info(f'Linked Prefix {prefix} to VLAN ID {vlan_nb_id}')
-            except:
-                logging.warning(f'Unable to link a prefix for interface to VLAN ID {vlan_nb_id}')
+                prefix_obj = ipaddress.ip_network(ips, strict=False)
+                '''If pulling the prefix by ID, it is not necessary to pass along param, just put the ID in the parent'''
+                prefix = self.pynb.ipam.prefixes.get(prefix=prefix_obj.with_prefixlen)
+                #add code to create prefix if it doesnt exsist?
+                logging.info(f"trying to link prefix {prefix} to ID {vlan_nb_id}")
+                try:
+                    prefix.update({
+                        'vlan': vlan_nb_id
+                    })
+                    logging.info(f'Linked Prefix {prefix} to VLAN ID {vlan_nb_id}')
+                except:
+                    logging.warning(f'Unable to link a prefix for interface to VLAN ID {vlan_nb_id}')
 
     def _vlanimporter(self,group, device):
         '''dumps them vlans into them groups and links it to the SVI created'''
