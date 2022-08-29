@@ -8,8 +8,7 @@ services:
       dockerfile: "Dockerfile"
       args:
         PYTHON_VER: "3.7.7"
-    command: python local/main.py
-
+    command: python3 ./main.py
     stdin_open: true
     tty: true
     env_file:
