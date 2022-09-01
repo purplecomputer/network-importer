@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 import pynautobot
 from config import nb_url, nb_token
+import ipaddress
 import sys
 
 
@@ -38,6 +39,7 @@ class ImportClientIDs():
             pass
         logging.debug(ip)
         clientID = requests.get(f'http://admin.webair.com/cgi-bin/clientbyip.cgi?ip={ip}')
+
         if clientID.status_code != 200:
             logging.warning(f'could not find CID for : {ip}')
             return None

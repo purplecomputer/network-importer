@@ -16,5 +16,3 @@ dsc121.gsc.webair.net,ds121-l3
 dsd121.gsc.webair.net,ds121-l3
 dsc180.gsc.webair.net,ds180-l3
 dsd180.gsc.webair.net,ds180-l3
-
-
