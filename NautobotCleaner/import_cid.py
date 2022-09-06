@@ -105,3 +105,7 @@ class ImportClientIDs():
         for prefix in all_prefixes:
             gpool.spawn(self._add_tenant_to_prefix(prefix.id))
 
+if __name__ == "__main__":
+    nbc = ImportClientIDs()
+    nbc.linkclientidtoip()
+
