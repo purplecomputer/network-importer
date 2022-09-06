@@ -87,7 +87,10 @@ if __name__ == "__main__":
     with open('list_of_devices.txt', 'r') as listOfDevices:
         for device in listOfDevices:
             device_group = device.split(',')
-            gpool.spawn(sync.main_sync(device_group[0], device_group[1].rstrip()))
+            try:
+                gpool.spawn(sync.main_sync(device_group[0], device_group[1].rstrip()))
+            except Exception as e:
+                logging.warning(e)
     #this already had threading built in, just calling it here to run
     nbc.linkclientidtoip()
 

@@ -166,7 +166,8 @@ class NautobotCleanerVlans:
         tenant_group = self.pynb.tenancy.tenants.get(name=str(group))
         if tenant_group is None:
             tenant_group = self.pynb.tenancy.tenants.create(
-                name =str(group).lower()
+                name =str(group).lower(),
+                group=
             )
 
         if not isinstance(vlans, dict):

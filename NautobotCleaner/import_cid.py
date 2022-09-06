@@ -13,24 +13,31 @@ class ImportClientIDs():
     def __init__(self):
         self.pynb = pynautobot.api(nb_url, token=nb_token)
         self.runTime = datetime.now()
+        self.parent_tenant = '80d77e66-6727-43ca-8cbb-3ab2dc410bdd'
         #logging.basicConfig(filename=f'synclogs/CID/{self.runTime}_cid.log', level=logging.INFO)
 
     def _update_or_create_tenant(self, **kwargs ):
-        '''Finds the tenant, if not cretes it and returns ID'''
+        '''Finds the tenant, if not creates it and returns ID'''
         tenant_group = self.pynb.tenancy.tenants.get(name=f"{kwargs.get('CID')}-{kwargs.get('site')}-{kwargs.get('service')}")
         if tenant_group is None:
             tenant_group = self.pynb.tenancy.tenants.create(
-                name=f"{kwargs.get('CID')}-{kwargs.get('site')}-{kwargs.get('service')}"
+                name=f"{kwargs.get('CID')}-{kwargs.get('site')}-{kwargs.get('service')}",
+                group = self.parent_tenant,
+                custom_fields = {
+                    "Client ID Number" : str(kwargs.get('CID'))
+                                 }
             )
             return tenant_group.id
         else:
             tenant_group.update({
-                'name' : f"{kwargs.get('CID')}-{kwargs.get('site')}-{kwargs.get('service')}"
+                'name' : f"{kwargs.get('CID')}-{kwargs.get('site')}-{kwargs.get('service')}",
+                'group' : self.parent_tenant,
+                "custom_fields": {
+                    "Client ID Number": str(kwargs.get('CID'))
+            }
             }
             )
             return tenant_group.id
-
-
     def _fetchscpid(self,ip):
         if "/" in str(ip):
             logging.debug(ip)
@@ -47,7 +54,7 @@ class ImportClientIDs():
         else:
             logging.info(f"Found CID:{clientID.json()['cid']} for {ip}")
             return clientID.json()['cid']
-    def _add_tenant_to_prefix(self,prefix_id):
+    def _add_tenant_to_prefix_vlan(self,prefix_id):
         try:
             prefix_object = self.pynb.ipam.prefixes.get(prefix_id)
         except:
@@ -61,9 +68,19 @@ class ImportClientIDs():
             }
             )
         except Exception as e:
-            logging.warning(f"Could not add the custom field due to the following error - {e}")
+            logging.warning(f"Could not add the Tenant Object field to the prefix - {e}")
         logging.info(f"Succesfully linked tenant object {tenant_id} to prefix {prefix_id}")
+        try:
+            self._add_tenant_to_vlan(prefix_object.vlan.id)
+        except Exception as e:
+            logging.warning(f"Could not add the Tenant Object field to the prefix - {e}")
+        logging.info("Succesfully Linked tenant to VLAN object associated with prefix´")
 
+    def _add_tenant_to_vlan(self, vlan_id, tenant_id):
+        vlan_object = self.pynb.ipam.vlans.get(vlan_id)
+        vlan_object.update({
+            'tenant' : tenant_id
+        })
     def _add_cid_to_cf(self,prefix):
         try:
             prefix_object = self.pynb.ipam.prefixes.get(prefix)
