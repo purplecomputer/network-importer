@@ -167,7 +167,6 @@ class NautobotCleanerVlans:
         if tenant_group is None:
             tenant_group = self.pynb.tenancy.tenants.create(
                 name =str(group).lower(),
-                group=
             )
 
         if not isinstance(vlans, dict):
@@ -401,7 +400,3 @@ class NautobotCleanerVlans:
 if __name__ == "__main__":
     nbv = NautobotCleanerVlans()
     nbv.importdevicevlans(group='ds121-l3', selected_devices=['dsc121.gsc.webair.net', 'dsd121.gsc.webair.net'])
-
-        
-
-
