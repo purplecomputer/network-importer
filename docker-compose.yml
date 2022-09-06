@@ -26,6 +26,8 @@ services:
     ports:
       - "9997:9997"
       - "9996:9996"
+    links:
+      - batfish
 networks:
   default:
     name: nautobot-docker-compose_default
