@@ -103,7 +103,7 @@ class ImportClientIDs():
         gpool = gevent.pool.Pool(100)
         all_prefixes = self.pynb.ipam.prefixes.all()
         for prefix in all_prefixes:
-            gpool.spawn(self._add_tenant_to_prefix(prefix.id))
+            gpool.spawn(self._add_tenant_to_prefix_vlan(prefix.id))
 
 if __name__ == "__main__":
     nbc = ImportClientIDs()
