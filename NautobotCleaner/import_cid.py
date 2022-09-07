@@ -71,7 +71,7 @@ class ImportClientIDs():
             logging.warning(f"Could not add the Tenant Object field to the prefix - {e}")
         logging.info(f"Succesfully linked tenant object {tenant_id} to prefix {prefix_id}")
         try:
-            self._add_tenant_to_vlan(prefix_object.vlan.id)
+            self._add_tenant_to_vlan(prefix_object.vlan.id, tenant_id)
         except Exception as e:
             logging.warning(f"Could not add the Tenant Object field to the prefix - {e}")
         logging.info("Succesfully Linked tenant to VLAN object associated with prefix´")

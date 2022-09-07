@@ -230,9 +230,9 @@ class NautobotCleanerVlans:
     def _linkPrefixtoVlan(self, interface_id,vlan_nb_id):
         '''Tested this code on 08 01 22 the prefix.update method is still valid way of updting the prefix'''
         #Grab all da ips assocaited with da interface
-        interface_addresses = self.pynb.ipam.ip_addresses.filter(interface_id)
+        interface_addresses = self.pynb.ipam.ip_addresses.filter(interface_id=interface_id)
         if len(interface_addresses) == 0:
-            raise Exception(f'Interface ID {interface_id} as not prefixes assigned')
+            raise Exception(f'Interface ID {interface_id} does not appear to have IP addresses assigned')
         else:
             for ips in interface_addresses:
             #grab the ip and turn it into a prefix
