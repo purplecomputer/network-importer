@@ -1,6 +1,6 @@
 
 from netmiko import ConnectHandler
-from config import nb_url, nb_token,device_username,device_password
+from config import nb_url, nb_token,device_username,device_password, device_platform_connection
 import pynautobot
 import ipaddress
 import gevent
@@ -86,9 +86,9 @@ class NautobotCleanerRoutes():
         '''uses netmiko and NTC textfsm tempalte to pull static routes'''
         logging.info(f'Import prefix from routing table for {device}')
         device_object = self.pynb.dcim.devices.get(name=str(device))
-        # device_os = device_platform_connection[str(device.platform)]['os']
+        device_os = device_platform_connection[str(device.platform)]['os']
         net_connect = ConnectHandler(
-            device_type='cisco_ios',
+            device_type=device_os,
             host=str(device),
             username=str(device_username),
             password=str(device_password),

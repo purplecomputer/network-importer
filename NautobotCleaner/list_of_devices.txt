@@ -8,6 +8,8 @@ es0.par.webair.net,par-l3
 es1.par.webair.net,par-l3
 es0.sg.webair.net,sg-l3
 es1.sg.webair.net,sg-l3
+rs450.mtl.webair.net,mtl-l3
+rs460.mtl.webair.net,mtl-l3
 es0.mtl.webair.net,mtl-l3
 es1.mtl.webair.net,mtl-l3
 dsc120.gsc.webair.net,ds120-l3
